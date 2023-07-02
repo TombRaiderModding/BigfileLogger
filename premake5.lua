@@ -22,10 +22,13 @@ project "BigfileLogger"
     filter "platforms:Win64"
         architecture "x86_64"
         links "MinHook.x64.lib"
+        optimize "Off"
 
     filter "configurations:Debug"
         defines { "DEBUG", "_DEBUG" }
 
     filter "configurations:Release"
         defines { "NDEBUG" }
+
+    filter { "configurations:Release", "platforms:Win32" }
         optimize "On"

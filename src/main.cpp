@@ -7,11 +7,11 @@
 #include <set>
 
 std::ofstream file;
-std::set<unsigned int> hashes;
+std::set<unsigned __int64> hashes;
 
 void Log(unsigned int hash, const char* filename)
 {
-	// keep internal list so we don't write 100 duplicates to log
+	// keep internal list so we don't write hundreds of duplicates to log
 	if (hashes.find(hash) == hashes.end())
 	{
 		hashes.insert(hash);
@@ -45,6 +45,19 @@ unsigned int __fastcall TigerArchiveFileSystem_CalculateHash(const char* filenam
 
 	return hash;
 }
+
+// tiger 64-bit hash variant, since tr11
+#ifdef _WIN64
+unsigned __int64(__fastcall* orgTigerArchiveFileSystem_CalculateHash64)(const char* filename);
+unsigned __int64 __fastcall TigerArchiveFileSystem_CalculateHash64(const char* filename)
+{
+	auto hash = orgTigerArchiveFileSystem_CalculateHash64(filename);
+
+	Log(hash, filename);
+
+	return hash;
+}
+#endif
 
 template<typename T>
 T GetAddress(void* ptr)
@@ -82,6 +95,7 @@ void Initialize()
 	}
 #else
 	auto tigerCalculateHash = hook::pattern("8B 71 30 48 8B E9 48 8B CA 33 DB 44 8B DE E8").count_hint(1);
+	auto tigerCalculateHash64 = hook::pattern("8B 71 30 48 8B E9 48 8B CA 33 FF 8B DE E8").count_hint(1);
 
 	if (!tigerCalculateHash.empty())
 	{
@@ -89,6 +103,14 @@ void Initialize()
 			GetAddress<void*>(tigerCalculateHash.get_first(14)),
 			TigerArchiveFileSystem_CalculateHash,
 			reinterpret_cast<void**>(&orgTigerArchiveFileSystem_CalculateHash));
+	}
+
+	if (!tigerCalculateHash64.empty())
+	{
+		MH_CreateHook(
+			GetAddress<void*>(tigerCalculateHash64.get_first(13)),
+			TigerArchiveFileSystem_CalculateHash64,
+			reinterpret_cast<void**>(&orgTigerArchiveFileSystem_CalculateHash64));
 	}
 #endif
 

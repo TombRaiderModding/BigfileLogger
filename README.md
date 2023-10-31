@@ -7,5 +7,7 @@ Has been tested with the following games:
 - Tomb Raider Anniversary
 - Tomb Raider Underworld
 - Lara Croft and the Guardian of Light
+- Tomb Raider
 - Lara Croft and the Temple of Osiris
 - Rise of the Tomb Raider
+- Shadow of the Tomb Raider

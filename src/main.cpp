@@ -9,7 +9,7 @@
 std::ofstream file;
 std::set<unsigned __int64> hashes;
 
-void Log(unsigned int hash, const char* filename)
+void Log(unsigned __int64 hash, const char* filename)
 {
 	// keep internal list so we don't write hundreds of duplicates to log
 	if (hashes.find(hash) == hashes.end())

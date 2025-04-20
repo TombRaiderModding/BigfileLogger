@@ -1,0 +1,27 @@
+gametitle=Tomb Raider - Underworld
+
+[Bigfile logger]
+description=Bigfile logger
+author=TheIndra
+
+patch=0,EE,20314618,extended,08046D22 // j 0011B488
+patch=0,EE,2031461C,extended,00000000 // nop
+
+// from tr8.s
+patch=0,EE,2011B488,extended,23BDFFF8
+patch=0,EE,2011B48C,extended,AFB00000
+patch=0,EE,2011B490,extended,AFA40004
+patch=0,EE,2011B494,extended,3C10005F
+patch=0,EE,2011B498,extended,36109F58
+patch=0,EE,2011B49C,extended,34030075
+patch=0,EE,2011B4A0,extended,02002021
+patch=0,EE,2011B4A4,extended,00A02821
+patch=0,EE,2011B4A8,extended,0000000C
+patch=0,EE,2011B4AC,extended,00000000
+patch=0,EE,2011B4B0,extended,8FA40004
+patch=0,EE,2011B4B4,extended,8FB00000
+patch=0,EE,2011B4B8,extended,23BD0008
+patch=0,EE,2011B4BC,extended,27BDFEF0
+patch=0,EE,2011B4C0,extended,FFB00100
+patch=0,EE,2011B4C4,extended,080C5188
+patch=0,EE,2011B4C8,extended,00000000

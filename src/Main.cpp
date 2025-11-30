@@ -2,24 +2,25 @@
 #include <MinHook.h>
 #include <Hooking.Patterns.h>
 
-#include <cassert>
+#include <cstdint>
 #include <fstream>
-#include <set>
 
-std::ofstream file;
-std::set<unsigned __int64> hashes;
+#include "HashSet.h"
 
-void Log(unsigned __int64 hash, const char* filename)
+static std::ofstream s_file;
+static HashSet s_hashes;
+
+static void Log(uint64_t hash, const char* filename)
 {
 	// keep internal list so we don't write hundreds of duplicates to log
-	if (hashes.find(hash) == hashes.end())
+	if (s_hashes.try_insert(hash))
 	{
-		hashes.insert(hash);
-
-		file << filename << std::endl;
+		s_file << filename << std::endl;
 	}
 }
 
+// archive variant
+#ifndef _WIN64
 unsigned int(__stdcall* orgArchiveFileSystem_CalculateHash)(const char* filename);
 unsigned int __stdcall ArchiveFileSystem_CalculateHash(const char* filename)
 {
@@ -29,6 +30,7 @@ unsigned int __stdcall ArchiveFileSystem_CalculateHash(const char* filename)
 
 	return hash;
 }
+#endif
 
 // tiger variant
 #ifndef _WIN64
@@ -60,7 +62,7 @@ unsigned __int64 __fastcall TigerArchiveFileSystem_CalculateHash64(const char* f
 #endif
 
 template<typename T>
-T GetAddress(void* ptr)
+static T GetAddress(void* ptr)
 {
 #ifndef _WIN64
 	return (T)((__int32)ptr + *(__int32*)((__int32)ptr + 1) + 5);
@@ -69,7 +71,7 @@ T GetAddress(void* ptr)
 #endif
 }
 
-void Initialize()
+static void Initialize()
 {
 	MH_Initialize();
 
@@ -115,17 +117,16 @@ void Initialize()
 #endif
 
 	// open output file
-	file.open("./filelist.txt", std::ios::out | std::ios::ate , _SH_DENYWR);
+	s_file.open("./filelist.txt", std::ios::out | std::ios::ate, _SH_DENYWR);
 
 	MH_EnableHook(MH_ALL_HOOKS);
 }
 
-void Uninitialize()
+static void Uninitialize()
 {
 	MH_Uninitialize();
 
-	file.close();
-	hashes.clear();
+	s_file.close();
 }
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD ul_reason_for_call, LPVOID lpReserved)

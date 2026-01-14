@@ -7,11 +7,11 @@ jobs:
     runs-on: windows-latest
     
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v6
       with:
         submodules: true
     
-    - uses: microsoft/setup-msbuild@v1.1
+    - uses: microsoft/setup-msbuild@v2
     - uses: ilammy/msvc-dev-cmd@v1
 
     - name: Download premake5

@@ -49,6 +49,7 @@ unsigned int __fastcall TigerArchiveFileSystem_CalculateHash(const char* filenam
 	return hash;
 }
 
+#ifdef _WIN64
 // Stub that we wrap around CalculateHash in TR2 since the game expect those registers to not be modified
 struct CalculateHashStub : public jitasm::Frontend
 {
@@ -71,6 +72,7 @@ struct CalculateHashStub : public jitasm::Frontend
 		ret();
 	}
 };
+#endif
 
 // tiger 64-bit hash variant, since tr11
 #ifdef _WIN64

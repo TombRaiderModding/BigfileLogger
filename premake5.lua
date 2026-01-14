@@ -11,7 +11,7 @@ project "BigfileLogger"
     files "src/**"
 
     files { "vendor/patterns/*.cpp", "vendor/minhook/src/**" }
-    includedirs { "vendor/patterns", "vendor/minhook/include" }
+    includedirs { "vendor/patterns", "vendor/minhook/include", "vendor/jitasm" }
 
     symbols "On"
 

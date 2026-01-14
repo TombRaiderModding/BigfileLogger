@@ -4,3 +4,6 @@
 [submodule "vendor/minhook"]
 	path = vendor/minhook
 	url = https://github.com/TsudaKageyu/minhook
+[submodule "vendor/jitasm"]
+	path = vendor/jitasm
+	url = https://github.com/citizenfx/jitasm.git

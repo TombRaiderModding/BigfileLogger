@@ -1,6 +1,7 @@
 #include <Windows.h>
 #include <MinHook.h>
 #include <Hooking.Patterns.h>
+#include <jitasm.h>
 
 #include <cstdint>
 #include <fstream>
@@ -47,6 +48,29 @@ unsigned int __fastcall TigerArchiveFileSystem_CalculateHash(const char* filenam
 
 	return hash;
 }
+
+// Stub that we wrap around CalculateHash in TR2 since the game expect those registers to not be modified
+struct CalculateHashStub : public jitasm::Frontend
+{
+	void InternalMain()
+	{
+		// Preserve registers
+		push(rcx);
+		push(rdx);
+		push(r8);
+		push(r9);
+
+		mov(rax, (uintptr_t)TigerArchiveFileSystem_CalculateHash);
+		call(rax);
+
+		pop(r9);
+		pop(r8);
+		pop(rdx);
+		pop(rcx);
+
+		ret();
+	}
+};
 
 // tiger 64-bit hash variant, since tr11
 #ifdef _WIN64
@@ -101,9 +125,11 @@ static void Initialize()
 
 	if (!tigerCalculateHash.empty())
 	{
+		static CalculateHashStub calculateHash;
+
 		MH_CreateHook(
 			GetAddress<void*>(tigerCalculateHash.get_first(14)),
-			TigerArchiveFileSystem_CalculateHash,
+			calculateHash.GetCode(),
 			reinterpret_cast<void**>(&orgTigerArchiveFileSystem_CalculateHash));
 	}
 

@@ -60,10 +60,18 @@ struct CalculateHashStub : public jitasm::Frontend
 		push(rdx);
 		push(r8);
 		push(r9);
+		push(r10);
+		push(r11);
+
+		sub(rsp, 0x28);
 
 		mov(rax, (uintptr_t)TigerArchiveFileSystem_CalculateHash);
 		call(rax);
 
+		add(rsp, 0x28);
+
+		pop(r11);
+		pop(r10);
 		pop(r9);
 		pop(r8);
 		pop(rdx);

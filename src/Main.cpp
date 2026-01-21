@@ -7,9 +7,12 @@
 #include <fstream>
 
 #include "HashSet.h"
+#include "Option.h"
 
 static std::ofstream s_file;
 static HashSet s_hashes;
+
+static Option<bool> s_append("AppendFileList", false);
 
 static void Log(uint64_t hash, const char* filename)
 {
@@ -50,12 +53,12 @@ unsigned int __fastcall TigerArchiveFileSystem_CalculateHash(const char* filenam
 }
 
 #ifdef _WIN64
-// Stub that we wrap around CalculateHash in TR2 since the game expect those registers to not be modified
+// stub that we wrap around CalculateHash in TR2 since the game expect those registers to not be modified
 struct CalculateHashStub : public jitasm::Frontend
 {
 	void InternalMain()
 	{
-		// Preserve registers
+		// preserve registers
 		push(rcx);
 		push(rdx);
 		push(r8);
@@ -153,7 +156,7 @@ static void Initialize()
 #endif
 
 	// open output file
-	s_file.open("./filelist.txt", std::ios::out | std::ios::ate, _SH_DENYWR);
+	s_file.open("./filelist.txt", std::ios::out | (s_append ? std::ios::app : std::ios::ate), _SH_DENYWR);
 
 	MH_EnableHook(MH_ALL_HOOKS);
 }

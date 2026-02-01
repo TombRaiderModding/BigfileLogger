@@ -134,7 +134,7 @@ static void Initialize()
 	}
 #else
 	auto tigerCalculateHash = hook::pattern("8B 71 30 48 8B E9 48 8B CA 33 DB 44 8B DE E8").count_hint(1);
-	auto tigerCalculateHash64 = hook::pattern("8B 71 30 48 8B E9 48 8B CA 33 FF 8B DE E8").count_hint(1);
+	auto tigerCalculateHash64 = hook::pattern("48 8B E9 48 8B CA 33 FF 8B DE E8").count_hint(1);
 
 	if (!tigerCalculateHash.empty())
 	{
@@ -149,7 +149,7 @@ static void Initialize()
 	if (!tigerCalculateHash64.empty())
 	{
 		MH_CreateHook(
-			GetAddress<void*>(tigerCalculateHash64.get_first(13)),
+			GetAddress<void*>(tigerCalculateHash64.get_first(10)),
 			TigerArchiveFileSystem_CalculateHash64,
 			reinterpret_cast<void**>(&orgTigerArchiveFileSystem_CalculateHash64));
 	}

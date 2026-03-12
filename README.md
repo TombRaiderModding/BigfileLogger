@@ -11,3 +11,5 @@ Has been tested with the following games:
 - Lara Croft and the Temple of Osiris
 - Rise of the Tomb Raider
 - Shadow of the Tomb Raider
+- Marvel's Avengers
+- Legacy of Kain: Defiance Remastered

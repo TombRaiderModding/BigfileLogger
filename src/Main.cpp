@@ -96,6 +96,17 @@ unsigned __int64 __fastcall TigerArchiveFileSystem_CalculateHash64(const char* f
 
 	return hash;
 }
+
+// defiance remastered
+unsigned int(__fastcall* orgLOAD_HashName)(const char* filename);
+unsigned int __fastcall LOAD_HashName(const char* filename)
+{
+	auto hash = orgLOAD_HashName(filename);
+
+	Log(hash, filename);
+
+	return hash;
+}
 #endif
 
 template<typename T>
@@ -135,6 +146,7 @@ static void Initialize()
 #else
 	auto tigerCalculateHash = hook::pattern("8B 71 30 48 8B E9 48 8B CA 33 DB 44 8B DE E8").count_hint(1);
 	auto tigerCalculateHash64 = hook::pattern("48 8B E9 48 8B CA 33 FF 8B DE E8").count_hint(1);
+	auto hashName = hook::pattern("48 8D 54 24 20 48 2B D1 90 0F B6 01").count_hint(1);
 
 	if (!tigerCalculateHash.empty())
 	{
@@ -152,6 +164,14 @@ static void Initialize()
 			GetAddress<void*>(tigerCalculateHash64.get_first(10)),
 			TigerArchiveFileSystem_CalculateHash64,
 			reinterpret_cast<void**>(&orgTigerArchiveFileSystem_CalculateHash64));
+	}
+
+	if (!hashName.empty())
+	{
+		MH_CreateHook(
+			hashName.get_first(-7),
+			LOAD_HashName,
+			reinterpret_cast<void**>(&orgLOAD_HashName));
 	}
 #endif
 
